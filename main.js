@@ -63,6 +63,7 @@ function pAequorFactory(number, strandArray) {
       }
       const identicalPercentage = (areMatch / totalCompared) * 100;
       console.log(`specimen #${this.specimenNum} and specimen #${specimenToCompare.specimenNum} match ${areMatch}/${totalCompared} bases. That's ${identicalPercentage.toFixed(2)}% DNA in common.`);
+      return identicalPercentage; //used to find most related pair in findMostRelatedPair()
     },
 
 // return true if object’s DNA array contains min 60% 'C' or 'G' bases
@@ -111,11 +112,31 @@ const createInstances = instancesAmount => {
   console.log(`Total created instances: ${instancesToStudy.length}`); 
   console.log(`All specimens are likely to survive? ${instancesToStudy.every(instance => instance.willLikelySurvive())}`
   );
-  
   return instancesToStudy;
 }
 
 createInstances(30);
+
+// Find the two most related instances of pAequor
+const findMostRelatedPair = () => {
+  let mostRelated = 0;
+  let firstSpecimen;
+  let secondSpecimen;
+  for (let i = 0; i < instancesToStudy.length; i++) {
+    for (let j =0; j < instancesToStudy.length; j++){
+      if(instancesToStudy[i] === instancesToStudy[j]) {
+        continue;
+      }
+      let currentPair = instancesToStudy[i].compareDNA(instancesToStudy[j]);
+      if (currentPair > mostRelated) {
+        mostRelated = currentPair;
+        firstSpecimen = instancesToStudy[i].specimenNum;
+        secondSpecimen = instancesToStudy[j].specimenNum;
+        }
+    }
+  }
+  return `Most relation found between specimens #${firstSpecimen} and #${secondSpecimen}: ${mostRelated.toFixed(2)}% in common`
+}
 
 
 /*** Tests ***/ 
@@ -128,7 +149,4 @@ createInstances(30);
 //console.log(`specimen #${test.specimenNum}'s DNA: ${test.dna}'`);
 //console.log(`specimen #${test2.specimenNum}'s DNA: ${test2.dna}'`);
 //console.log(test.willLikelySurvive());
-
-
-
-
+//console.log(findMostRelatedPair());
